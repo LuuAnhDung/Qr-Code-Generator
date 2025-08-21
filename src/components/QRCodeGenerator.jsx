@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import QRCode from "qrcode";
 import { QrCode, Link, MessageSquare, User, Download, Copy, Check } from 'lucide-react';
 
 const TRANSLATIONS = {
@@ -11,8 +12,8 @@ const TRANSLATIONS = {
     "enterUrl": "Enter URL",
     "enterText": "Enter Text",
     "contactInformation": "Contact Information",
-    "websiteUrl": "Website URL",
-    "urlPlaceholder": "example.com or https://example.com",
+    "websiteUrl": "Website URL / Social Media",
+    "urlPlaceholder": "example.com or facebook.com/username",
     "urlHelp": "Enter a website URL. If you don't include http://, we'll add https:// automatically.",
     "textContent": "Text Content",
     "textPlaceholder": "Enter any text to generate QR code...",
@@ -26,8 +27,8 @@ const TRANSLATIONS = {
     "emailPlaceholder": "john.doe@example.com",
     "organization": "Organization",
     "organizationPlaceholder": "Company Name",
-    "website": "Website",
-    "websitePlaceholder": "https://example.com",
+    "website": "Website / Social Media",
+    "websitePlaceholder": "https://example.com or https://facebook.com/username",
     "clearAllFields": "Clear All Fields",
     "generatedQrCode": "Generated QR Code",
     "scanQrCode": "Scan this QR code with your device",
@@ -48,23 +49,23 @@ const TRANSLATIONS = {
     "enterUrl": "Nhập đường dẫn",
     "enterText": "Nhập văn bản",
     "contactInformation": "Thông tin liên hệ",
-    "websiteUrl": "Đường dẫn trang web",
-    "urlPlaceholder": "example.com hoặc https://example.com",
+    "websiteUrl": "Đường dẫn trang web / Mạng xã hội",
+    "urlPlaceholder": "example.com hoặc facebook.com/username",
     "urlHelp": "Nhập địa chỉ website. Nếu bạn không thêm http://, chúng tôi sẽ tự động thêm https://.",
     "textContent": "Nội dung văn bản",
     "textPlaceholder": "Nhập bất kỳ văn bản nào để tạo mã QR...",
     "firstName": "Tên",
-    "firstNamePlaceholder": "Nguyễn",
+    "firstNamePlaceholder": "Văn A",
     "lastName": "Họ",
-    "lastNamePlaceholder": "Văn A",
+    "lastNamePlaceholder": "Nguyễn",
     "phoneNumber": "Số điện thoại",
     "phonePlaceholder": "+84 912 345 678",
     "emailAddress": "Địa chỉ Email",
     "emailPlaceholder": "nguyenvana@example.com",
     "organization": "Tổ chức",
     "organizationPlaceholder": "Tên công ty",
-    "website": "Trang web",
-    "websitePlaceholder": "https://example.com",
+    "website": "Trang web / Mạng xã hội",
+    "websitePlaceholder": "https://example.com hoặc https://facebook.com/username",
     "clearAllFields": "Xóa tất cả",
     "generatedQrCode": "Mã QR đã tạo",
     "scanQrCode": "Quét mã QR này bằng thiết bị của bạn",
@@ -94,7 +95,7 @@ const QRCodeGenerator = () => {
   const [qrData, setQrData] = useState('');
   const [copied, setCopied] = useState(false);
   const qrContainerRef = useRef(null);
-  const [locale, setLocale] = useState(findMatchingLocale(browserLocale));
+  const [locale, setLocale] = useState("en-US");
   const t = (key) => TRANSLATIONS[locale]?.[key] || TRANSLATIONS['en-US'][key] || key;
   
   // Form states for different types
@@ -110,64 +111,101 @@ const QRCodeGenerator = () => {
   });
 
   // QR Code generation using QRious library via CDN
+  // const generateQRCode = async (text) => {
+  //   if (!text.trim()) {
+  //     if (qrContainerRef.current) {
+  //       qrContainerRef.current.innerHTML = "";
+  //     }
+  //     return;
+  //   }
+
+  //   try {
+  //     // Clear cũ
+  //     qrContainerRef.current.innerHTML = "";
+
+  //     // Tạo canvas mới
+  //     const canvas = document.createElement("canvas");
+  //     qrContainerRef.current.appendChild(canvas);
+
+  //     // Sinh QR
+  //     await QRCode.toCanvas(canvas, text, {
+  //       errorCorrectionLevel: "H",
+  //       margin: 2,
+  //       scale: 6,
+  //     });
+  //   } catch (error) {
+  //     console.error("Error generating QR:", error);
+  //   }
+  // };
+
+  // const createQR = async (text) => {
+  //   if (!qrContainerRef.current) return;
+
+  //   try {
+  //     // Clear previous QR code
+  //     qrContainerRef.current.innerHTML = "";
+
+  //     // Create canvas element
+  //     const canvas = document.createElement("canvas");
+  //     qrContainerRef.current.appendChild(canvas);
+
+  //     // Generate QR code vào canvas
+  //     await QRCode.toCanvas(canvas, text, {
+  //       errorCorrectionLevel: "H", // giữ dữ liệu khi bị nhòe/in
+  //       margin: 2,
+  //       scale: 6,
+  //       color: {
+  //         dark: "#000000",
+  //         light: "#ffffff",
+  //       },
+  //     });
+
+  //     // Style the canvas
+  //     canvas.className = "w-full h-auto rounded-xl shadow-lg bg-white";
+  //     canvas.style.maxWidth = "300px";
+  //     canvas.style.height = "auto";
+  //   } catch (error) {
+  //     console.error("Error creating QR code:", error);
+  //     generateFallbackQR(text);
+  //   }
+  // };
   const generateQRCode = async (text) => {
     if (!text.trim()) {
       if (qrContainerRef.current) {
-        qrContainerRef.current.innerHTML = '';
+        qrContainerRef.current.innerHTML = "";
       }
       return;
     }
 
     try {
-      // Load QRious library dynamically
-      if (!window.QRious) {
-        const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js';
-        script.onload = () => {
-          createQR(text);
-        };
-        document.head.appendChild(script);
-      } else {
-        createQR(text);
-      }
+      await createQR(text);
     } catch (error) {
-      console.error('Error loading QR library:', error);
-      // Fallback to Google Charts API
+      console.error("Error generating QR:", error);
       generateFallbackQR(text);
     }
   };
 
-  const createQR = (text) => {
+  const createQR = async (text) => {
     if (!qrContainerRef.current) return;
-    
-    try {
-      // Clear previous QR code
-      qrContainerRef.current.innerHTML = '';
-      
-      // Create canvas element
-      const canvas = document.createElement('canvas');
-      qrContainerRef.current.appendChild(canvas);
-      
-      // Generate QR code
-      const qr = new window.QRious({
-        element: canvas,
-        value: text,
-        size: 300,
-        background: 'white',
-        foreground: 'black',
-        level: 'H',
-        mime: 'image/png'
-      });
-      
-      // Style the canvas
-      canvas.className = 'w-full h-auto rounded-xl shadow-lg bg-white';
-      canvas.style.maxWidth = '300px';
-      canvas.style.height = 'auto';
-      
-    } catch (error) {
-      console.error('Error creating QR code:', error);
-      generateFallbackQR(text);
-    }
+
+    qrContainerRef.current.innerHTML = "";
+
+    const canvas = document.createElement("canvas");
+    qrContainerRef.current.appendChild(canvas);
+
+    await QRCode.toCanvas(canvas, text, {
+      errorCorrectionLevel: "H",
+      margin: 2,
+      scale: 6,
+      color: {
+        dark: "#000000",
+        light: "#ffffff",
+      },
+    });
+
+    canvas.className = "w-full h-auto rounded-xl shadow-lg bg-white";
+    canvas.style.maxWidth = "300px";
+    canvas.style.height = "auto";
   };
 
   const generateFallbackQR = (text) => {
@@ -207,7 +245,6 @@ const QRCodeGenerator = () => {
   const generateVCard = (contact) => {
     const vcard = `BEGIN:VCARD
 VERSION:3.0
-CHARSET:UTF-8
 FN:${contact.firstName} ${contact.lastName}
 N:${contact.lastName};${contact.firstName};;;
 ORG:${contact.organization}
@@ -311,7 +348,7 @@ END:VCARD`;
             <div className="inline-flex items-center justify-center w-20 h-20 bg-white/5 backdrop-blur-xl rounded-3xl mb-6 border border-white/10 shadow-lg">
                 <QrCode className="w-10 h-10 text-white" />
             </div>
-            <h1 className="text-5xl font-bold bg-gradient-to-r from-gray-100 via-gray-300 to-gray-400 bg-clip-text text-transparent mb-3 drop-shadow-lg">
+            <h1 className="text-5xl font-bold leading-[1.2] bg-gradient-to-r from-gray-100 via-gray-300 to-gray-400 bg-clip-text text-transparent mb-3 drop-shadow-lg">
                 {t('appTitle')}
             </h1>
             <p className="text-gray-300 text-xl font-light">{t('appDescription')}</p>
@@ -546,6 +583,25 @@ END:VCARD`;
 
             <div className="text-center mt-8 text-gray-500 text-sm">
                 <p>{t('footerText')}</p>
+                {/* Social Links */}
+                <div className="flex justify-center gap-4 mt-3">
+                  <a
+                    href="https://facebook.com/lladungg"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition-colors"
+                  >
+                    Facebook
+                  </a>
+                  <a
+                    href="https://instagram.com/lladungg"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition-colors"
+                  >
+                    Instagram
+                  </a>
+                </div>
                 <button
                     onClick={() => setLocale(locale === "en-US" ? "vi-VN" : "en-US")}
                     className="underline text-gray-400 hover:text-white transition-colors mt-2"
