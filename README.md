@@ -10,7 +10,7 @@ Built with **React + Vite**, styled with **Tailwind CSS**, and supports **multil
 ## ✨ Features
 
 - Generate QR codes for:
-  - Website URLs (e.g., https://example.com, Facebook, Instagram)
+  - Website URLs (e.g., https://example.com/, https://facebook.com/username, https://instagram.com/username)
   - Plain text
   - Contact information (vCard format)
 - **Download** or **copy QR code data** easily
@@ -64,10 +64,10 @@ npm run preview
 - Default locale: **English (en-US)**
 
 - Supported locales:
- - English (en-US)
- - Vietnamese (vi-VN)
+  - English (en-US)
+  - Vietnamese (vi-VN)
 
-- You can toggle the language in the app footer.
+You can toggle the language in the app footer.
 
 ---
 
