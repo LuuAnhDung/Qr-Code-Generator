@@ -5,7 +5,6 @@ Built with **React + Vite**, styled with **Tailwind CSS**, and supports **multil
 
 ![QR Code Generator Preview](./public/screenshot.png)
 
----
 
 ## ✨ Features
 
@@ -18,7 +17,6 @@ Built with **React + Vite**, styled with **Tailwind CSS**, and supports **multil
 - **Internationalization (i18n)**: English 🇺🇸 & Vietnamese 🇻🇳
 - Responsive design, optimized for desktop & mobile
 
----
 
 ## 🛠️ Tech Stack
 
@@ -28,7 +26,6 @@ Built with **React + Vite**, styled with **Tailwind CSS**, and supports **multil
 - **QR Code Engine**: [qrcode](https://github.com/soldair/node-qrcode)
 - **Internationalization**: Custom JSON-based translation system
 
----
 
 ## 📦 Installation
 
@@ -58,7 +55,6 @@ Preview production build:
 npm run preview
 ```
 
----
 
 ## 🌐 Internationalization
 - Default locale: **English (en-US)**
@@ -69,18 +65,15 @@ npm run preview
 
 You can toggle the language in the app footer.
 
----
 
 ## 🤝 Contributing
 
 Contributions, issues, and feature requests are welcome!
 
----
 
 ## 📄 License
 This project is licensed under the MIT License – see the LICENSE file for details.
 
----
 
 ## 📬 Contact
 - **Author**: Dung Luu Anh
