@@ -71,12 +71,7 @@ You can toggle the language in the app footer.
 Contributions, issues, and feature requests are welcome!
 
 
-## 📄 License
-This project is licensed under the MIT License – see the LICENSE file for details.
-
-
 ## 📬 Contact
-- **Author**: Dung Luu Anh
 
 - **Facebook**: facebook.com/lladungg
 
